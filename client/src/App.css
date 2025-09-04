@@ -2,37 +2,146 @@
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+:root {
+  --primary: #2563eb;       /* Azul principal */
+  --primary-dark: #1e40af;  /* Azul más oscuro */
+  --secondary: #3b82f6;     /* Degradado inicial */
+  --secondary-dark: #1e3a8a;/* Degradado final */
+  --success: #16a34a;       /* Verde para éxito */
+  --error: #dc2626;         /* Rojo para error */
+  --warning: #f59e0b;       /* Amarillo para advertencia */
+  --text: #374151;          /* Gris oscuro para texto */
+  --text-light: #6b7280;    /* Gris claro */
+  --bg: #ffffff;            /* Fondo del formulario */
+  --shadow: rgba(0, 0, 0, 0.15);
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+body {
+  margin: 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background-image: url('./assets/imagenes/fondoCamaronera.jpg'); 
+  height: 100vh;
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  align-items: center;
 }
 
-.App-link {
-  color: #61dafb;
+/* Formulario */
+.login-form {
+  background: var(--bg);
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0px 8px 20px var(--shadow);
+  width: 420px;
+  animation: fadeIn 0.8s ease-in-out;
 }
 
-@keyframes App-logo-spin {
+/* Animación */
+@keyframes fadeIn {
   from {
-    transform: rotate(0deg);
+    opacity: 0;
+    transform: translateY(-15px);
   }
   to {
-    transform: rotate(360deg);
+    opacity: 1;
+    transform: translateY(0);
   }
+}
+
+/* Título */
+.login-form h2 {
+  font-size: 1.8rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: var(--primary-dark);
+}
+
+/* Labels */
+.login-form label {
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+/* Inputs */
+/* Inputs */
+.login-form input {
+  width: 95%;
+  padding: 0.75rem 1rem; /* un poco más de padding para coincidir con altura del botón */
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  margin-bottom: 1.2rem;
+  font-size: 1rem;
+  transition: 0.3s;
+  box-sizing: border-box;
+}
+
+/* Botón ver contraseña ya está centrado con transform */
+
+
+.login-form input:focus {
+  border-color: var(--primary);
+  outline: none;
+  box-shadow: 0 0 6px rgba(37, 99, 235, 0.4);
+}
+
+/* Botón principal */
+.login-form button[type="submit"] {
+  width: 100%;
+  background: var(--primary);
+  color: white;
+  padding: 0.8rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.login-form button[type="submit"]:hover {
+  background: var(--primary-dark);
+}
+
+.login-form button[type="submit"]:disabled {
+  background: #93c5fd;
+  cursor: not-allowed;
+}
+
+/* Botón ver contraseña */
+.toggle-password {
+  position: absolute;
+  right: 12px;
+  top: 36px;
+  cursor: pointer;
+  color: var(--text-light);
+  transition: color 0.2s;
+}
+
+.toggle-password:hover {
+  color: var(--text);
+}
+
+/* Texto enlace */
+.login-form .link-text {
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: var(--text-light);
+}
+
+.login-form .link-text button {
+  background: none;
+  border: none;
+  color: var(--primary);
+  cursor: pointer;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+
+.login-form .link-text button:hover {
+  text-decoration: underline;
+  color: var(--primary-dark);
 }

@@ -21,7 +21,8 @@ const getProfile = async (req, res) => {
         id_usuario: user.id_usuario,
         username: user.username,
         estado: user.estado,
-        fecha_crea: user.fecha_crea
+        fecha_crea: user.fecha_crea,
+        tipo_usuario: user.tipo_usuario
       },
       perfiles
     });

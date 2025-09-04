@@ -1,13 +1,16 @@
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react"; // íconos
+import Swal from "sweetalert2";
+import "../App.css"; // importa los estilos
 
 export default function Login() {
   const [usuario, setUsuario] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  
+
   const { login, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
@@ -20,75 +23,83 @@ export default function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError("");
 
     if (!usuario || !password) {
-      setError("Por favor complete todos los campos");
+      Swal.fire({
+        icon: "warning",
+        title: "Campos incompletos",
+        text: "Por favor complete todos los campos",
+        confirmButtonColor: "#f59e0b",
+      });
       setLoading(false);
       return;
     }
 
     const result = await login(usuario, password);
-    
+
     if (result.success) {
-      navigate("/dashboard");
+      Swal.fire({
+        icon: "success",
+        title: "¡Bienvenido!",
+        text: "Has iniciado sesión correctamente",
+        confirmButtonColor: "#2563eb",
+      }).then(() => {
+        navigate("/dashboard");
+      });
     } else {
-      setError(result.error || "Error al iniciar sesión");
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: result.error || "Usuario o contraseña incorrectos",
+        confirmButtonColor: "#dc2626",
+      });
     }
-    
+
     setLoading(false);
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
-      <form
-        onSubmit={handleLogin}
-        className="bg-white p-8 rounded shadow-md w-96"
-      >
-        <h2 className="text-2xl font-bold mb-6 text-center">Iniciar Sesión</h2>
+    <div className="flex justify-center items-center min-h-screen">
+      <form onSubmit={handleLogin} className="login-form">
+        <h2>Iniciar Sesión</h2>
 
-        {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-            {error}
-          </div>
-        )}
-
-        <label className="block mb-2 font-medium">Usuario</label>
+        <label>Usuario</label>
         <input
           type="text"
           value={usuario}
           onChange={(e) => setUsuario(e.target.value)}
-          className="w-full p-2 border rounded mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
           placeholder="Ingrese su usuario"
           required
         />
 
-        <label className="block mb-2 font-medium">Contraseña</label>
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="w-full p-2 border rounded mb-6 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="Ingrese su contraseña"
-          required
-        />
+        <label>Contraseña</label>
+<div className="relative w-full">
+  <input
+    type={showPassword ? "text" : "password"}
+    value={password}
+    onChange={(e) => setPassword(e.target.value)}
+    placeholder="Ingrese su contraseña"
+    required
+    className="w-full pr-10 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+  />
+   
+  <span
+   
+    onClick={() => setShowPassword(!showPassword)}
+    className="absolute inset-y-0 right-3 flex items-center cursor-pointer text-gray-500 hover:text-gray-700"
+  >
+    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+  </span>
+</div>
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-blue-700 text-white p-2 rounded hover:bg-blue-800 disabled:opacity-50"
-        >
+        <button type="submit" disabled={loading}>
           {loading ? "Iniciando sesión..." : "Entrar"}
         </button>
 
-        <div className="mt-4 text-center">
-          <p className="text-sm text-gray-600">
+        <div className="link-text">
+          <p>
             ¿No tienes cuenta?{" "}
-            <button
-              type="button"
-              onClick={() => navigate("/home")}
-              className="text-blue-600 hover:underline"
-            >
+            <button type="button" onClick={() => navigate("/home")}>
               Volver al inicio
             </button>
           </p>

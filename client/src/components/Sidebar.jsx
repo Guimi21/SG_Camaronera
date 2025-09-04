@@ -11,36 +11,40 @@ export default function Sidebar() {
     navigate("/home");
   };
 
+  // Filtrar menús según tipo de usuario
+  const userMenus = menus.filter(
+    (menu) => menu.perfilPermitido === user.tipo_usuario
+  );
+
   return (
-    <div className="w-64 bg-gray-800 text-white min-h-screen">
+    <aside className="w-64 bg-gray-800 text-white min-h-screen relative">
+      {/* Cabecera */}
       <div className="p-4 border-b border-gray-700">
         <h1 className="text-xl font-bold">Camaronera</h1>
         <p className="text-sm text-gray-400">Sistema de gestión</p>
         {user && (
-          <p className="text-sm text-gray-300 mt-2">
-            Hola, {user.username}
-          </p>
+          <p className="text-sm text-gray-300 mt-2">Hola, {user.username}</p>
         )}
       </div>
-      
+
+      {/* Navegación */}
       <nav className="p-4">
         <h2 className="text-sm uppercase text-gray-400 mb-4">Navegación</h2>
         <ul className="space-y-2">
-          {/* Home público */}
           <li>
-            <Link 
-              to="/home" 
-              className="flex items-center p-2 rounded hover:bg-gray-700"
+            <Link
+              to="/home"
+              className={`flex items-center p-2 rounded hover:bg-gray-700 ${
+                location.pathname === "/home" ? "bg-gray-700" : ""
+              }`}
             >
               <span className="mr-2">🏠</span>
               Inicio Público
             </Link>
           </li>
-          
-          {/* Dashboard Home */}
           <li>
-            <Link 
-              to="/dashboard" 
+            <Link
+              to="/dashboard"
               className={`flex items-center p-2 rounded hover:bg-gray-700 ${
                 location.pathname === "/dashboard" ? "bg-gray-700" : ""
               }`}
@@ -49,12 +53,12 @@ export default function Sidebar() {
               Dashboard
             </Link>
           </li>
-          
+
           {/* Menús dinámicos */}
-          {menus.map((menu) => (
+          {userMenus.map((menu) => (
             <li key={menu.id_menu}>
-              <Link 
-                to={`/dashboard${menu.ruta}`} 
+              <Link
+                to={`/dashboard${menu.ruta}`}
                 className={`flex items-center p-2 rounded hover:bg-gray-700 ${
                   location.pathname === `/dashboard${menu.ruta}` ? "bg-gray-700" : ""
                 }`}
@@ -67,6 +71,7 @@ export default function Sidebar() {
         </ul>
       </nav>
 
+      {/* Footer / Logout */}
       <div className="absolute bottom-0 w-64 p-4 border-t border-gray-700">
         <button
           onClick={handleLogout}
@@ -75,6 +80,6 @@ export default function Sidebar() {
           Cerrar Sesión
         </button>
       </div>
-    </div>
+    </aside>
   );
 }
