@@ -4,7 +4,7 @@ const { executeQuery } = require('../config/database');
 const authQueries = {
   getUserByUsername: async (username) => {
     return await executeQuery(
-      `SELECT u.id_usuario, u.username, u.password_hash, u.estado 
+      `SELECT u.id_usuario, u.username, u.password_hash, u.estado ,u.tipo_usuario
        FROM usuario u 
        WHERE u.username = ? AND u.estado = 'A'`,
       [username]
@@ -40,7 +40,7 @@ const authQueries = {
 const profileQueries = {
   getAllProfiles: async () => {
     return await executeQuery(
-      `SELECT id_perfil, nombre, descripcion 
+      `SELECT id_perfil, nombre, descripcion, 
        FROM perfil 
        ORDER BY nombre`
     );

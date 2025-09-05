@@ -1,66 +1,53 @@
 import { useAuth } from "../context/AuthContext";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 export default function Sidebar() {
-  const { menus, logout, user } = useAuth();
+  const { menus, user } = useAuth();
   const location = useLocation();
-  const navigate = useNavigate();
 
-  const handleLogout = () => {
-    logout();
-    navigate("/home");
-  };
+  if (!user) return null;
 
-  // Filtrar menús según tipo de usuario
-  const userMenus = menus.filter(
-    (menu) => menu.perfilPermitido === user.tipo_usuario
-  );
+  console.log("Todos los menús:", menus); // Imprime todos los menús
 
   return (
-    <aside className="w-64 bg-gray-800 text-white min-h-screen relative">
-      {/* Cabecera */}
-      <div className="p-4 border-b border-gray-700">
+    <aside className="w-64 bg-gray-800 text-white min-h-screen p-4">
+      <div className="mb-4">
         <h1 className="text-xl font-bold">Camaronera</h1>
         <p className="text-sm text-gray-400">Sistema de gestión</p>
-        {user && (
-          <p className="text-sm text-gray-300 mt-2">Hola, {user.username}</p>
-        )}
+        <p className="text-sm mt-2">Hola, {user.username}</p>
       </div>
 
-      {/* Navegación */}
-      <nav className="p-4">
-        <h2 className="text-sm uppercase text-gray-400 mb-4">Navegación</h2>
-        <ul className="space-y-2">
+      <nav>
+        <h2 className="text-sm uppercase text-gray-400 mb-2">Navegación</h2>
+        <ul>
           <li>
             <Link
               to="/home"
-              className={`flex items-center p-2 rounded hover:bg-gray-700 ${
+              className={`block p-2 rounded hover:bg-gray-700 ${
                 location.pathname === "/home" ? "bg-gray-700" : ""
               }`}
             >
-              <span className="mr-2">🏠</span>
-              Inicio Público
+              🏠 Inicio Público
             </Link>
           </li>
           <li>
             <Link
               to="/dashboard"
-              className={`flex items-center p-2 rounded hover:bg-gray-700 ${
+              className={`block p-2 rounded hover:bg-gray-700 ${
                 location.pathname === "/dashboard" ? "bg-gray-700" : ""
               }`}
             >
-              <span className="mr-2">📊</span>
-              Dashboard
+              📊 Dashboard
             </Link>
           </li>
 
-          {/* Menús dinámicos */}
-          {userMenus.map((menu) => (
+          {/* Menús sin filtrar */}
+          {menus.map((menu) => (
             <li key={menu.id_menu}>
               <Link
-                to={`/dashboard${menu.ruta}`}
+                to={menu.ruta.startsWith("/") ? menu.ruta : `/${menu.ruta}`}
                 className={`flex items-center p-2 rounded hover:bg-gray-700 ${
-                  location.pathname === `/dashboard${menu.ruta}` ? "bg-gray-700" : ""
+                  location.pathname === menu.ruta ? "bg-gray-700" : ""
                 }`}
               >
                 <span className="mr-2">{menu.icono}</span>
@@ -70,16 +57,6 @@ export default function Sidebar() {
           ))}
         </ul>
       </nav>
-
-      {/* Footer / Logout */}
-      <div className="absolute bottom-0 w-64 p-4 border-t border-gray-700">
-        <button
-          onClick={handleLogout}
-          className="w-full bg-red-600 hover:bg-red-700 text-white p-2 rounded"
-        >
-          Cerrar Sesión
-        </button>
-      </div>
     </aside>
   );
 }

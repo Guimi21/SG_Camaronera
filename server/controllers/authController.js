@@ -20,7 +20,7 @@ const login = async (req, res) => {
     }
 
     const user = users[0];
-    console.log('Usuario encontrado:', user.id_usuario);
+    console.log('Usuario encontrado:', user);
     console.log('Contraseña almacenada en BD:', user.password_hash); // Ahora esperamos texto plano
 
     // Verificar contraseña (comparación directa de texto plano)
@@ -58,7 +58,8 @@ const login = async (req, res) => {
       usuario: {
         id_usuario: user.id_usuario,
         username: user.username,
-        estado: user.estado
+        estado: user.estado,
+        tipo_usuario: user.tipo_usuario
       },
       perfiles,
       menus

@@ -4,26 +4,39 @@ import Digitador from "./Modulos/Digitador";
 import Directivo from "./Modulos/Directivo";
 
 export default function Dashboard() {
-  const { user } = useAuth();
+  const { user, logout, loading } = useAuth();
 
-  // Renderiza el módulo según tipo de usuario
+  if (loading) return <p>Cargando datos...</p>;
+  if (!user) return <p>No hay usuario autenticado</p>;
+
   const renderModulo = () => {
-    console.log("Tipo de usuario:", user?.tipo_usuario); // <-- Muestra en consola el tipo de usuario
-
-    switch (user?.tipo_usuario) {
-      case "Administrador":
+    const tipo = user.tipo_usuario?.trim().toLowerCase();
+    switch (tipo) {
+      case "administrador":
         return <Administrador />;
-      case "Digitador":
+      case "digitador":
         return <Digitador />;
-      case "Director":
+      case "director":
+      case "directivo":
         return <Directivo />;
       default:
-        return <p>No tienes permisos para ver este módulo.</p>;
+        return <p>No tienes permisos para este módulo.</p>;
     }
   };
 
   return (
-    <div>
+    <div className="p-6">
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-2xl font-bold">Dashboard</h1>
+        <button
+          onClick={logout}
+          className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+        >
+          Cerrar sesión
+        </button>
+      </div>
+
+      <p className="mb-4">Usuario actual: {user.tipo_usuario}</p>
       {renderModulo()}
     </div>
   );
