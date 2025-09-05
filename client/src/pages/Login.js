@@ -15,11 +15,11 @@ export default function Login() {
   const navigate = useNavigate();
 
   // ✅ Redirección segura usando useEffect
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigate("/dashboard");
-    }
-  }, [isAuthenticated, navigate]);
+useEffect(() => {
+  if (isAuthenticated) {
+    navigate("/layout");
+  }
+}, [isAuthenticated, navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();

@@ -1,10 +1,10 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
-import Sidebar from "./components/Sidebar";
+
+import Layout from "./components/Layout";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
-import Dashboard from "./pages/Dashboard";
 
 function App() {
   return (
@@ -16,17 +16,16 @@ function App() {
           <Route path="/home" element={<Home />} />
           <Route path="/login" element={<Login />} />
 
-          {/* Rutas protegidas */}
-          <Route path="/dashboard" element={
-            <ProtectedRoute>
-              <div className="flex">
-                <Sidebar />
-                <div className="flex-1 p-4">
-                  <Dashboard />
-                </div>
-              </div>
-            </ProtectedRoute>
-          }/>
+          {/* Rutas protegidas con Layout */}
+          <Route
+            path="/layout"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
 
           {/* Redirección por defecto */}
           <Route path="*" element={<Home />} />

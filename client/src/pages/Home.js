@@ -11,16 +11,16 @@ export default function Home() {
       // Redirigir automáticamente al módulo principal según el tipo de usuario
       switch (user.tipo_usuario) {
         case "Administrador":
-          navigate("/dashboard/administrador");
+          navigate("/administrador");
           break;
         case "Digitador":
-          navigate("/dashboard/digitador");
+          navigate("/digitador");
           break;
         case "Directivo":
-          navigate("/dashboard/directivo");
+          navigate("/directivo");
           break;
         default:
-          navigate("/dashboard");
+          navigate("/body");
       }
     }
   }, [isAuthenticated, user, navigate]);

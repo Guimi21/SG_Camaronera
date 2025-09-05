@@ -7,41 +7,21 @@ export default function Sidebar() {
 
   if (!user) return null;
 
-  console.log("Todos los menús:", menus); // Imprime todos los menús
-
   return (
-    <aside className="w-64 bg-gray-800 text-white min-h-screen p-4">
-      <div className="mb-4">
-        <h1 className="text-xl font-bold">Camaronera</h1>
-        <p className="text-sm text-gray-400">Sistema de gestión</p>
-        <p className="text-sm mt-2">Hola, {user.username}</p>
+    <aside className="w-64 bg-gray-800 text-white min-h-screen p-4 flex flex-col">
+      {/* Logo */}
+      <div className="mb-6 flex flex-col items-center">
+        <img
+          src="/logo.png" // reemplaza con tu logo
+          alt="Logo Camaronera"
+          className="w-24 h-24 object-contain mb-2"
+        />
+        <p className="text-sm text-gray-400">{user.tipo_usuario}</p>
       </div>
 
-      <nav>
-        <h2 className="text-sm uppercase text-gray-400 mb-2">Navegación</h2>
-        <ul>
-          <li>
-            <Link
-              to="/home"
-              className={`block p-2 rounded hover:bg-gray-700 ${
-                location.pathname === "/home" ? "bg-gray-700" : ""
-              }`}
-            >
-              🏠 Inicio Público
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/dashboard"
-              className={`block p-2 rounded hover:bg-gray-700 ${
-                location.pathname === "/dashboard" ? "bg-gray-700" : ""
-              }`}
-            >
-              📊 Dashboard
-            </Link>
-          </li>
-
-          {/* Menús sin filtrar */}
+      {/* Menús */}
+      <nav className="flex-1">
+        <ul className="space-y-2">
           {menus.map((menu) => (
             <li key={menu.id_menu}>
               <Link
