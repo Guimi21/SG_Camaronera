@@ -62,7 +62,5 @@ const profileQueries = {
 
 module.exports = {
   authQueries,
-  profileQueries,
-  piscinaQueries,
-  cosechaQueries
+  profileQueries
 };
