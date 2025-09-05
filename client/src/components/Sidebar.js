@@ -25,7 +25,7 @@ export default function Sidebar() {
           {menus.map((menu) => (
             <li key={menu.id_menu}>
               <Link
-                to={menu.ruta.startsWith("/") ? menu.ruta : `/${menu.ruta}`}
+                to={menu.ruta.startsWith("/layout/") ? menu.ruta : `/${menu.ruta}`}
                 className={`flex items-center p-2 rounded hover:bg-gray-700 ${
                   location.pathname === menu.ruta ? "bg-gray-700" : ""
                 }`}
