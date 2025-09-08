@@ -1,28 +1,36 @@
 import { useState } from "react";
+import { piscinaService } from "../../../services/api";
+import { useAuth } from "../../../context/AuthContext"; // Usamos el hook correcto
 
 export default function PiscinaForm() {
+  const { token } = useAuth(); // Obtenemos token del hook
   const [codigo, setCodigo] = useState("");
   const [hectareas, setHectareas] = useState("");
   const [ubicacion, setUbicacion] = useState("");
+
+  const authFetch = async (url, options = {}) => {
+    if (!token) throw new Error("No hay token de autenticación");
+    options.headers = {
+      ...options.headers,
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json"
+    };
+    return fetch(url, options);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const data = { codigo, hectareas, ubicacion };
 
     try {
-      const res = await fetch("http://localhost:5000/piscina", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-      if (res.ok) {
-        alert("Piscina guardada correctamente!");
-        setCodigo(""); setHectareas(""); setUbicacion("");
-      } else {
-        alert("Error al guardar la piscina");
-      }
+      const response = await piscinaService.createPiscina(authFetch, data);
+      console.log("Piscina creada:", response);
+      setCodigo("");
+      setHectareas("");
+      setUbicacion("");
     } catch (error) {
-      console.error(error);
+      console.error("Error creando piscina:", error);
+      alert("Error al guardar la piscina. Revisa la consola.");
     }
   };
 

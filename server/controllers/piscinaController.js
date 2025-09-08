@@ -28,9 +28,10 @@ const getPiscinaById = async (req, res) => {
 
 const createPiscina = async (req, res) => {
   try {
-    const piscinaData = req.body;
-    const result = await piscinaQueries.createPiscina(piscinaData);
-    
+    const { codigo, hectareas, ubicacion } = req.body;
+
+    const result = await piscinaQueries.createPiscina(codigo, hectareas, ubicacion);
+
     res.status(201).json({
       message: 'Piscina creada exitosamente',
       id: result.insertId
@@ -40,5 +41,6 @@ const createPiscina = async (req, res) => {
     res.status(500).json({ message: 'Error creando piscina' });
   }
 };
+
 
 module.exports = { getAllPiscinas, getPiscinaById, createPiscina };

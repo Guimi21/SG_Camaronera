@@ -58,9 +58,35 @@ const profileQueries = {
   }
 };
 
+const piscinaQueries = {
+  getAllPiscinas: async () => {
+    return await executeQuery(  
+      `SELECT id_piscina, codigo, hectareas, ubicacion
+        FROM piscina  
+        ORDER BY codigo`
+    );
+  },
+
+  getPiscinaById: async (id) => {
+    return await executeQuery(
+      `SELECT id_piscina, codigo, hectareas, ubicacion
+       FROM piscina
+       WHERE id_piscina = ?`,
+      [id]
+    );
+  },
+  createPiscina: async (codigo, hectareas, ubicacion) => {
+    return await executeQuery(
+      `INSERT INTO piscina (codigo, hectareas, ubicacion) 
+        VALUES (?, ?, ?)`,
+      [codigo, hectareas, ubicacion]
+    );
+  }
+};
 
 
 module.exports = {
   authQueries,
-  profileQueries
+  profileQueries,
+  piscinaQueries
 };
