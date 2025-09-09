@@ -1,7 +1,12 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState, useEffect, useCallback } from "react";
+import config from "../config";
 
 // Crear contexto
 const AuthContext = createContext();
+
+// Tiempo de inactividad (15 minutos)
+const INACTIVITY_TIME = 15 * 60 * 1000;
+let inactivityTimer = null;
 
 // Provider
 export const AuthProvider = ({ children }) => {
@@ -10,8 +15,84 @@ export const AuthProvider = ({ children }) => {
   const [menus, setMenus] = useState([]);
   const [loading, setLoading] = useState(true);
   const [token, setToken] = useState(null);
+  const { API_BASE_URL } = config;
 
-  const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5000/api";
+  // Logout
+  const logout = useCallback(() => {
+    console.log("Cerrando sesión");
+    setUser(null);
+    setPerfiles([]);
+    setMenus([]);
+    setToken(null);
+    localStorage.removeItem("authData");
+    if (inactivityTimer) clearTimeout(inactivityTimer);
+  }, []);
+
+  // Reiniciar timer de inactividad
+  const resetInactivityTimer = useCallback(() => {
+    if (inactivityTimer) clearTimeout(inactivityTimer);
+    inactivityTimer = setTimeout(() => {
+      console.log("Sesión cerrada por inactividad");
+      logout();
+    }, INACTIVITY_TIME);
+  }, [logout]);
+
+  // Verificar token al iniciar
+  const verifyToken = useCallback(async () => {
+    const authData = localStorage.getItem("authData");
+    if (!authData) {
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const parsedData = JSON.parse(authData);
+
+      if (!parsedData.token) {
+        logout();
+        return;
+      }
+
+      setToken(parsedData.token);
+
+      const response = await fetch(`${API_BASE_URL}/auth/verify`, {
+        headers: { Authorization: `Bearer ${parsedData.token}` },
+      });
+
+      if (response.ok) {
+        const userData = await response.json();
+        setUser(userData.usuario);
+        setPerfiles(userData.perfiles);
+        setMenus(userData.menus);
+        resetInactivityTimer(); // reinicia timer
+      } else {
+        logout();
+      }
+    } catch (error) {
+      console.error("Error verificando token:", error);
+      logout();
+    } finally {
+      setLoading(false);
+    }
+  }, [API_BASE_URL, logout, resetInactivityTimer]);
+
+  // Ejecutar verifyToken al montar
+  useEffect(() => {
+    verifyToken();
+  }, [verifyToken]);
+
+  // Escuchar actividad del usuario para reiniciar timer
+  useEffect(() => {
+    if (!token) return;
+
+    const events = ["mousemove", "keydown", "click", "scroll"];
+    events.forEach(event => window.addEventListener(event, resetInactivityTimer));
+
+    return () => {
+      events.forEach(event => window.removeEventListener(event, resetInactivityTimer));
+      if (inactivityTimer) clearTimeout(inactivityTimer);
+    };
+  }, [token, resetInactivityTimer]);
 
   // Login
   const login = async (username, password) => {
@@ -38,6 +119,8 @@ export const AuthProvider = ({ children }) => {
 
       localStorage.setItem("authData", JSON.stringify(authData));
 
+      resetInactivityTimer(); // iniciar timer al login
+
       return { success: true };
     } catch (error) {
       console.error("Error en login:", error);
@@ -45,66 +128,11 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Logout
-  const logout = () => {
-    console.log("Cerrando sesión");
-    setUser(null);
-    setPerfiles([]);
-    setMenus([]);
-    setToken(null);
-    localStorage.removeItem("authData");
-  };
-
-  // Verificar token al iniciar
-  const verifyToken = async () => {
-    const authData = localStorage.getItem("authData");
-    if (!authData) {
-      setLoading(false);
-      return;
-    }
-
-    try {
-      const parsedData = JSON.parse(authData);
-      if (!parsedData.token) {
-        logout();
-        return;
-      }
-
-      setToken(parsedData.token);
-
-      const response = await fetch(`${API_BASE_URL}/auth/verify`, {
-        headers: { Authorization: `Bearer ${parsedData.token}` },
-      });
-
-      if (response.ok) {
-        const userData = await response.json();
-        setUser(userData.usuario);
-        setPerfiles(userData.perfiles);
-        setMenus(userData.menus);
-      } else {
-        logout();
-      }
-    } catch (error) {
-      console.error("Error verificando token:", error);
-      logout();
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Ejecutar verifyToken al montar
- useEffect(() => {
-  const init = async () => {
-    await verifyToken();
-  };
-  init();
-}, []); 
-
   // Fetch autenticado
   const authFetch = async (url, options = {}) => {
     if (!token) throw new Error("No hay token de autenticación");
 
-    const config = {
+    const configFetch = {
       ...options,
       headers: {
         "Content-Type": "application/json",
@@ -113,12 +141,15 @@ export const AuthProvider = ({ children }) => {
       },
     };
 
-    const response = await fetch(`${API_BASE_URL}${url}`, config);
+    const response = await fetch(`${API_BASE_URL}${url}`, configFetch);
 
     if (response.status === 401) {
       logout();
       throw new Error("Sesión expirada");
     }
+
+    // Renovar timer al hacer peticiones
+    resetInactivityTimer();
 
     return response;
   };

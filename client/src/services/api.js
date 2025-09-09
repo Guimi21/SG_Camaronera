@@ -1,5 +1,5 @@
+import config from "../config";
 
-const API_URL = "http://localhost:5000";
 // Servicio para Usuarios
 export const userService = {
   getProfile: async (authFetch) => {
@@ -12,13 +12,13 @@ export const userService = {
 };
 export const piscinaService = {
   getAllPiscinas: async (authFetch) => {
-    const response = await authFetch(`${API_URL}/api/piscina`);
+    const response = await authFetch(`${config.API_BASE_URL}/piscina`);
     if (!response.ok) throw new Error('Error obteniendo piscinas');
     return response.json();
   },
 
   createPiscina: async (authFetch, data) => {
-    const response = await authFetch(`${API_URL}/api/piscina/createPiscina`, {
+    const response = await authFetch(`${config.API_BASE_URL}/piscina/createPiscina`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
