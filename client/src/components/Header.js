@@ -1,5 +1,7 @@
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { FaUserCircle } from "react-icons/fa";
+import { FaSignOutAlt } from "react-icons/fa";
 
 export default function Header() {
   const { user, logout } = useAuth();
@@ -7,26 +9,29 @@ export default function Header() {
 
   const handleLogout = () => {
     logout();
-    navigate("/login"); // Redirige al login
+    navigate("/login");
   };
 
   if (!user) return null;
 
   return (
-    <header className="flex justify-between items-center bg-gray-800 text-white p-4 shadow-md">
-      <div>
-        <h1 className="text-lg font-bold">Camaronera</h1>
-        <p className="text-sm text-gray-400">Sistema de gestión</p>
+    <header className="flex items-center bg-gradient-to-r from-gray-800 via-gray-900 to-black text-white px-6 py-4 shadow-lg">
+      
+      {/* Usuario */}
+      <div className="flex items-center space-x-2">
+        <FaUserCircle className="text-2xl text-gray-300" />
+        <span className="text-sm font-medium">Hola, {user.username}</span>
       </div>
-      <div className="flex items-center space-x-4">
-        <span>Hola, {user.username}</span>
-        <button
-          onClick={handleLogout}
-          className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded"
-        >
-          Cerrar sesión
-        </button>
-      </div>
+
+      {/* Botón de cerrar sesión alineado a la derecha */}
+    <button
+  onClick={handleLogout}
+  className="ml-auto flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300"
+>
+  <FaSignOutAlt />
+  Cerrar sesión
+</button>
+
     </header>
   );
 }
