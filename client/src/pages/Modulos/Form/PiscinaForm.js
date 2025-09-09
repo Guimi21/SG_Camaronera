@@ -33,6 +33,7 @@ export default function PiscinaForm() {
     setCodigo("");
     setHectareas("");
     setUbicacion("");
+    console.log("Piscina creada:", response);
   } catch (error) {
     console.error("Error creando piscina:", error);
     Swal.fire({
