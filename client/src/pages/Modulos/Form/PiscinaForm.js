@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { piscinaService } from "../../../services/api";
 import { useAuth } from "../../../context/AuthContext"; // Usamos el hook correcto
-
+import Swal from "sweetalert2";
 export default function PiscinaForm() {
   const { token } = useAuth(); // Obtenemos token del hook
   const [codigo, setCodigo] = useState("");
@@ -18,22 +18,31 @@ export default function PiscinaForm() {
     return fetch(url, options);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const data = { codigo, hectareas, ubicacion };
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  const data = { codigo, hectareas, ubicacion };
 
-    try {
-      const response = await piscinaService.createPiscina(authFetch, data);
-      console.log("Piscina creada:", response);
-      setCodigo("");
-      setHectareas("");
-      setUbicacion("");
-    } catch (error) {
-      console.error("Error creando piscina:", error);
-      alert("Error al guardar la piscina. Revisa la consola.");
-    }
-  };
-
+  try {
+    const response = await piscinaService.createPiscina(authFetch, data);
+    Swal.fire({
+      icon: 'success',
+      title: '¡Piscina creada!',
+      text: `La piscina con código ${codigo} se ha registrado correctamente.`,
+      confirmButtonColor: '#2563eb'
+    });
+    setCodigo("");
+    setHectareas("");
+    setUbicacion("");
+  } catch (error) {
+    console.error("Error creando piscina:", error);
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'No se pudo guardar la piscina. Revisa la consola.',
+      confirmButtonColor: '#dc2626'
+    });
+  }
+};
   return (
     <div className="form-container">
       <h2>Registrar Piscina</h2>
